@@ -48,6 +48,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subject\ISubject.cs" />
     <Compile Include="Subject\WeatherData.cs" />
+    <Compile Include="System\CurrentConditionDisplayX.cs" />
+    <Compile Include="System\MessageUnknownException.cs" />
+    <Compile Include="System\WeatherDataX.cs" />
+    <Compile Include="System\WeatherMessage.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
