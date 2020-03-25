@@ -4,11 +4,11 @@
 #include <string>
 using std::string;
 
-class DibCaptureHelper
+class PrintCaptureHelper
 {
 public:
-	DibCaptureHelper();
-	virtual ~DibCaptureHelper();
+	PrintCaptureHelper();
+	virtual ~PrintCaptureHelper();
 
 	bool Init(const string& windowName);
 	bool Init(HWND hwnd);
@@ -34,6 +34,5 @@ private:
 
 	RECT windowRect_;
 	RECT clientRect_;
-	POINT bitbltStartPoint_;
 	int bmpDataSize_;
 };
