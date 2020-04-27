@@ -1,11 +1,15 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
 
 namespace CaptureSharp
 {
     internal class DibCaptureHelper
     {
+        public IntPtr BitmapPtr => _hBitmap;
+        public Win32Types.BitmapInfo BitmapInfo => _bitmapInfo;
+        public Win32Types.Rect WindowRect => _windowRect;
+        public Win32Types.Rect ClientRect => _clientRect;
+        public int BitmapDataSize => _bmpDataSize;
+
         private IntPtr _hWnd = IntPtr.Zero;
         private IntPtr _hScrDc = IntPtr.Zero;
         private IntPtr _hMemDc = IntPtr.Zero;
@@ -17,18 +21,6 @@ namespace CaptureSharp
         private Win32Types.Rect _windowRect;
         private Win32Types.Rect _clientRect;
         private int _bmpDataSize;
-
-        private bool _saveFile;
-
-        public IntPtr GetBitmapPtr()
-        {
-            return _hBitmap;
-        }
-
-        public Win32Types.BitmapInfo GetBitmapInfo()
-        {
-            return _bitmapInfo;
-        }
 
         public bool Init(string windowName)
         {
@@ -102,21 +94,6 @@ namespace CaptureSharp
             return Init(hWnd);
         }
 
-        public Win32Types.Rect GetWindowRect()
-        {
-            return _windowRect;
-        }
-
-        public Win32Types.Rect GetClientRect()
-        {
-            return _clientRect;
-        }
-
-        public int GetBitmapDataSize()
-        {
-            return _bmpDataSize;
-        }
-
         public bool ChangeWindowHandle(string windowName)
         {
             Cleanup();
@@ -129,7 +106,7 @@ namespace CaptureSharp
             return Init(handle);
         }
 
-        public IntPtr GetCapture()
+        public IntPtr Capture()
         {
             if (_hBitmap.Equals(IntPtr.Zero) || _hMemDc.Equals(IntPtr.Zero) || _hScrDc.Equals(IntPtr.Zero))
             {
@@ -141,12 +118,10 @@ namespace CaptureSharp
                 _hScrDc, 0, 0,
                 (uint) Win32Consts.RasterOperationMode.SRCCOPY);
 
-            SaveFile();
-
             return ret ? _bitsPtr : IntPtr.Zero;
         }
 
-        public bool GetCapture(out IntPtr bitsPtr, out int bufferSize, out Win32Types.Rect rect)
+        public bool Capture(out IntPtr bitsPtr, out int bufferSize, out Win32Types.Rect rect)
         {
             bitsPtr = _bitsPtr;
             bufferSize = _bmpDataSize;
@@ -163,59 +138,6 @@ namespace CaptureSharp
                 (uint) Win32Consts.RasterOperationMode.SRCCOPY);
 
             return ret;
-        }
-
-        private void SaveFile()
-        {
-            if (!_saveFile)
-            {
-                return;
-            }
-
-            _saveFile = false;
-
-            var headerSize = (int) _bitmapInfo.bmiHeader.biSize;
-            var headerBuffer = StructToBytes(_bitmapInfo.bmiHeader, headerSize);
-
-            var fileHeader = new Win32Types.BitmapFileHeader();
-            var fileHeaderSize = Marshal.SizeOf(fileHeader) + _bitmapInfo.bmiHeader.biSize;
-            fileHeader.bfType = 0x4D42; //"BM"
-            fileHeader.bfSize = (uint) fileHeaderSize + (uint) _bmpDataSize;
-            fileHeader.bfOffBits = (uint) fileHeaderSize;
-            fileHeader.bfReserved1 = 0;
-            fileHeader.bfReserved2 = 0;
-            var fileHeaderBuffer = StructToBytes(fileHeader, Marshal.SizeOf(fileHeader));
-
-            var dataBuffer = new byte[_bmpDataSize];
-            Marshal.Copy(_bitsPtr, dataBuffer, 0, _bmpDataSize);
-
-            var path = Path.Combine(Environment.CurrentDirectory, DateTime.Now.ToString("HHmmss") + ".bmp");
-            var file = File.Open(path, FileMode.Create);
-            var binary = new BinaryWriter(file);
-            binary.Write(fileHeaderBuffer, 0, Marshal.SizeOf(fileHeader));
-            binary.Write(headerBuffer, 0, headerSize);
-            binary.Write(dataBuffer, 0, _bmpDataSize);
-            binary.Flush();
-
-            file.Seek(0, SeekOrigin.Begin);
-            var bmpDataBuffer = new byte[file.Length];
-            file.Read(bmpDataBuffer, 0, (int) file.Length);
-            file.Close();
-            file.Dispose();
-        }
-
-        //将结构体类型转换为byte数组
-        public static byte[] StructToBytes(object structObj, int size)
-        {
-            var bytes = new byte[size];
-            var structPtr = Marshal.AllocHGlobal(size);
-            //将结构体拷到分配好的内存空间
-            Marshal.StructureToPtr(structObj, structPtr, false);
-            //从内存空间拷贝到byte数组
-            Marshal.Copy(structPtr, bytes, 0, size);
-            //释放内存空间
-            Marshal.FreeHGlobal(structPtr);
-            return bytes;
         }
     }
 }

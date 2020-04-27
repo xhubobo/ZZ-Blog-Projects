@@ -42,8 +42,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DibCaptureHelper.cs" />
+    <Compile Include="PrintCaptureHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32Consts.cs" />
+    <Compile Include="Win32Funcs.cs" />
+    <Compile Include="Win32Types.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

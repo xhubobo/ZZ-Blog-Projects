@@ -4,6 +4,12 @@ namespace CaptureSharp
 {
     internal class PrintCaptureHelper
     {
+        public IntPtr BitmapPtr => _hBitmap;
+        public Win32Types.BitmapInfo BitmapInfo { get; } = new Win32Types.BitmapInfo();
+        public Win32Types.Rect WindowRect => _windowRect;
+        public Win32Types.Rect ClientRect => _clientRect;
+        public int BitmapDataSize => _bmpDataSize;
+
         private IntPtr _hWnd = IntPtr.Zero;
         private IntPtr _hScrDc = IntPtr.Zero;
         private IntPtr _hMemDc = IntPtr.Zero;
@@ -13,16 +19,6 @@ namespace CaptureSharp
         private Win32Types.Rect _windowRect;
         private Win32Types.Rect _clientRect;
         private int _bmpDataSize;
-
-        public IntPtr GetBitmapPtr()
-        {
-            return _hBitmap;
-        }
-
-        public Win32Types.BitmapInfo GetBitmapInfo()
-        {
-            return new Win32Types.BitmapInfo();
-        }
 
         public bool Init(IntPtr handle)
         {
@@ -78,24 +74,7 @@ namespace CaptureSharp
 
         public bool RefreshWindow()
         {
-            var hWnd = _hWnd;
-            Cleanup();
-            return Init(hWnd);
-        }
-
-        public Win32Types.Rect GetWindowRect()
-        {
-            return _windowRect;
-        }
-
-        public Win32Types.Rect GetClientRect()
-        {
-            return _clientRect;
-        }
-
-        public int GetBitmapDataSize()
-        {
-            return _bmpDataSize;
+            return ChangeWindowHandle(_hWnd);
         }
 
         public bool ChangeWindowHandle(string windowName)
@@ -110,7 +89,7 @@ namespace CaptureSharp
             return Init(handle);
         }
 
-        public IntPtr GetCapture()
+        public IntPtr Capture()
         {
             if (_hMemDc.Equals(IntPtr.Zero) || _hScrDc.Equals(IntPtr.Zero))
             {
@@ -123,7 +102,7 @@ namespace CaptureSharp
             return ret ? _hBitmap : IntPtr.Zero;
         }
 
-        public bool GetCapture(out IntPtr bitsPtr, out int bufferSize, out Win32Types.Rect rect)
+        public bool Capture(out IntPtr bitsPtr, out int bufferSize, out Win32Types.Rect rect)
         {
             bitsPtr = _hBitmap;
             bufferSize = _bmpDataSize;
