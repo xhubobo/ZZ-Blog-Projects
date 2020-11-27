@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NewsPublish.Service;
 
 namespace NewsPublish.Web
 {
@@ -26,6 +27,13 @@ namespace NewsPublish.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //注入服务类
+            services.AddTransient<BannerService>();
+            services.AddTransient<CommentService>();
+            services.AddTransient<NewsService>();
+
+            //注入数据库上下文类
+            services.AddTransient<Db>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
