@@ -81,8 +81,7 @@ namespace NewsPublish.Web.Areas.Admin.Controllers
                 return Json(new ResponseModel(0, "参数有误"));
             }
 
-            var ret = _bannerService.DeleteBanner(bannerId);
-            return Json(ret);
+            return Json(_bannerService.DeleteBanner(bannerId));
         }
 
         // GET: BannerController/Create

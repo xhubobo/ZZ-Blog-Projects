@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 using NewsPublish.Model.Entity;
 using NewsPublish.Model.Request;
 using NewsPublish.Model.Response;
@@ -13,10 +15,12 @@ namespace NewsPublish.Service
     public class BannerService
     {
         private readonly Db _db;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public BannerService(Db db)
+        public BannerService(Db db, IHostingEnvironment hostingEnvironment)
         {
             _db = db;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         /// <summary>
@@ -56,6 +60,18 @@ namespace NewsPublish.Service
 
             _db.Banner.Remove(banner);
             var ret = _db.SaveChanges();
+            if (ret > 0)
+            {
+                //删除Banner图片
+                var webRootPath = _hostingEnvironment.WebRootPath;
+                var imagePath = banner.Image.TrimStart('/');
+                var filePath = Path.Combine(webRootPath, imagePath);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+
             return ret > 0
                 ? new ResponseModel(200, "Banner删除成功")
                 : new ResponseModel(0, "Banner删除失败");
