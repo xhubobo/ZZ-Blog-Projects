@@ -77,7 +77,7 @@
                     //layer.msg('已删除!', 1);
                     $.ajax({
                         type: 'post',
-                        async: false,
+                        async: true,
                         url: '/Admin/Banner/DeleteBanner/',
                         data: { bannerId: id },
                         success: function (data) {
