@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using NewsPublish.Model.Entity;
 using NewsPublish.Model.Request;
@@ -12,10 +14,12 @@ namespace NewsPublish.Service
     public class NewsService
     {
         private readonly Db _db;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public NewsService(Db db)
+        public NewsService(Db db, IHostingEnvironment hostingEnvironment)
         {
             _db = db;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         #region 新闻类别
@@ -166,6 +170,18 @@ namespace NewsPublish.Service
             _db.News.Remove(news);
 
             var ret = _db.SaveChanges();
+            if (ret > 0)
+            {
+                //删除Banner图片
+                var webRootPath = _hostingEnvironment.WebRootPath;
+                var imagePath = news.Image.TrimStart('/');
+                var filePath = Path.Combine(webRootPath, imagePath);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+
             return ret > 0
                 ? new ResponseModel(200, "新闻删除成功")
                 : new ResponseModel(0, "新闻删除失败");
@@ -231,7 +247,9 @@ namespace NewsPublish.Service
                     NewsClassifyName = news.NewsClassify.Name,
                     Title = news.Title,
                     Image = news.Image,
-                    Contents = news.Contents,
+                    Contents = news.Contents.Length > 50
+                        ? news.Contents.Substring(0, 50) + "..."
+                        : news.Contents,
                     PublishDate = news.PublishDate.ToString("yyyy-MM-dd"),
                     CommentCount = news.NewsComment.Count,
                     Remark = news.Remark
@@ -262,7 +280,7 @@ namespace NewsPublish.Service
                     Title = news.Title,
                     Image = news.Image,
                     Contents = news.Contents.Length > 50
-                        ? news.Contents.Substring(50)
+                        ? news.Contents.Substring(0, 50)
                         : news.Contents,
                     PublishDate = news.PublishDate.ToString("yyyy-MM-dd"),
                     CommentCount = news.NewsComment.Count,
@@ -375,7 +393,7 @@ namespace NewsPublish.Service
                     Title = news.Title,
                     Image = news.Image,
                     Contents = news.Contents.Length > 50
-                        ? news.Contents.Substring(50)
+                        ? news.Contents.Substring(0, 50)
                         : news.Contents,
                     PublishDate = news.PublishDate.ToString("yyyy-MM-dd"),
                     CommentCount = news.NewsComment.Count,
