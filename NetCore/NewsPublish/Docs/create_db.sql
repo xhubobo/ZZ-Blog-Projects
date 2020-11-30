@@ -28,9 +28,9 @@ create table Banner (
 create table News (
 	Id int AUTO_INCREMENT comment '编号',
 	NewsClassifyId int comment '新闻类别编号' not null,
-	Title varchar(1000) comment '新闻标题' not null,
+	Title varchar(20) comment '新闻标题' not null,
 	Image varchar(200) comment '新闻图片' null,
-	Contents varchar(20) comment '新闻内容' null,
+	Contents varchar(1000) comment '新闻内容' null,
 	PublishDate datetime comment '发布日期' null,
 	Remark varchar(200) comment '备注' null,
 	constraint PK_NEWS primary key(Id)
