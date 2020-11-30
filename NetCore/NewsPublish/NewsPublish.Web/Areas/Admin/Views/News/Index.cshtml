@@ -41,7 +41,7 @@
                 }
             </select>
             &nbsp;
-            <input type="text" class="input-text" style="width:250px" placeholder="输入新闻标题" id="" name="">&nbsp;<button type="submit" class="btn btn-success" id="keyword" name="keyword"><i class="icon-search"></i> 搜新闻</button>
+            <input type="text" class="input-text" style="width:250px" placeholder="输入新闻标题" id="keyword" name="keyword">&nbsp;<button type="button" class="btn btn-success" onclick="search()"><i class="icon-search"></i> 搜新闻</button>
 
         </div>
         <div class="cl pd-5 bg-1 bk-gray mt-20">
@@ -144,6 +144,14 @@
                     }
                 }
             });
+        }
+
+        //搜索
+        function search() {
+            var classifyId = $('#classifyId').val();
+            var keyword = $('#keyword').val();
+            pageIndex = 1;
+            getNews(pageIndex, pageSize, classifyId, keyword);
         }
 
         //删除新闻
