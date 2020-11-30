@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
+using NewsPublish.Model.Entity;
 using NewsPublish.Model.Request;
 using NewsPublish.Model.Response;
 using NewsPublish.Service;
@@ -21,8 +25,29 @@ namespace NewsPublish.Web.Areas.Admin.Controllers
         // GET: NewsController
         public ActionResult Index()
         {
-            return View();
+            var newsClassifyList = _newsService.GetNewsClassifyList();
+            return View(newsClassifyList);
         }
+
+        [HttpGet]
+        public JsonResult GetNews(int pageIndex, int pageSize, int classifyId, string keyword)
+        {
+            var whereList = new List<Expression<Func<News, bool>>>();
+            if (classifyId > 0)
+            {
+                whereList.Add(t => t.NewsClassifyId == classifyId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                whereList.Add(t => t.Title.Contains(keyword));
+            }
+
+            var news = _newsService.QueryNewsPage(pageSize, pageIndex, out var total, whereList);
+            return Json(new {total = total, data = news.Data});
+        }
+
+        #region 新闻类别
 
         // GET: NewsController/NewsClassify
         public ActionResult NewsClassify()
@@ -58,5 +83,7 @@ namespace NewsPublish.Web.Areas.Admin.Controllers
                 ? Json(new ResponseModel(0, "请输入新闻类别名称"))
                 : Json(_newsService.EditNewsClassify(editNewsClassify));
         }
+
+        #endregion
     }
 }
