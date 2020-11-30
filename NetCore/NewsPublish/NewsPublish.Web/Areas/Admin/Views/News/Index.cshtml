@@ -46,7 +46,7 @@
         </div>
         <div class="cl pd-5 bg-1 bk-gray mt-20">
             <span class="l">
-                <a href="javascript:;" onClick="user_add('550','700','添加新闻','news-add.html')" class="btn btn-primary radius"><i class="icon-plus"></i> 添加新闻</a>
+                <a href="javascript:;" onClick="user_add('550','700','添加新闻','/Admin/News/AddNews')" class="btn btn-primary radius"><i class="icon-plus"></i> 添加新闻</a>
             </span>
 
         </div>
@@ -157,9 +157,35 @@
         //删除新闻
         function del(obj, id) {
             window.layer.confirm('确认要删除吗？', function (index) {
-                $(obj).parents("tr").remove();
-                window.llayer.msg('已删除!', 1);
+                $.ajax({
+                    type: 'post',
+                    async: true,
+                    url: '/Admin/News/DeleteNews/',
+                    data: { newsId: id },
+                    success: function(result) {
+                        if (result.code === 200) {
+                            window.layer.msg('已删除!', 1);
+                            if (currentPageCount === 1) {
+                                if (pageIndex === 1) {
+                                    reload();
+                                } else {
+                                    getNews(pageIndex - 1, pageSize, classifyId, keyword);
+                                }
+                            } else {
+                                getNews(pageIndex, pageSize, classifyId, keyword);
+                                //$(obj).parents("tr").remove(); //直接删除当前记录
+                            }
+                        } else {
+                            window.layer.msg(result.result, 1);
+                        }
+                    }
+                });
             });
+        }
+
+        //刷新
+        function reload() {
+            location.replace(location.href);
         }
     </script>
 
