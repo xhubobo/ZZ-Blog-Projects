@@ -219,21 +219,26 @@
             url: '/Home/GetBanner',
             success: function(data) {
                 if (data.code === 200) {
+                    $(".carousel-indicators").empty();
                     $(".carousel-inner").empty();
                     for (var i = 0; i < data.data.length; i++) {
                         var banner = data.data[i];
                         var bannerDiv;
+                        var bannerIndicator;
                         if (i === 0) {
+                            bannerIndicator = '<li data-target="#focusslide" data-slide-to="' + i + '" class="active"></li>';
                             bannerDiv = '<div class="item active">' +
                                 '<a href="' + banner.url + '" target="_blank">' +
                                 '<img src="' + banner.image + '" class="img-responsive">' +
                                 '</a></div>';
                         } else {
+                            bannerIndicator = '<li data-target="#focusslide" data-slide-to="' + i + '"></li>';
                             bannerDiv = '<div class="item">' +
                                 '<a href="' + banner.url + '" target="_blank">' +
                                 '<img src="' + banner.image + '" class="img-responsive">' +
                                 '</a></div>';
                         }
+                        $(".carousel-indicators").append(bannerIndicator);
                         $(".carousel-inner").append(bannerDiv);
                     }
                 }
