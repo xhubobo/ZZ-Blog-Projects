@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using NewsPublish.Model.Response;
 using NewsPublish.Service;
 
 namespace NewsPublish.Web.Controllers
@@ -37,6 +38,32 @@ namespace NewsPublish.Web.Controllers
         public JsonResult GetNewsCount()
         {
             return Json(_newsService.GetNewsCount(t => true));
+        }
+
+        [HttpGet]
+        public JsonResult GetHomeNews()
+        {
+            return Json(_newsService.GetNewsList(t => true, 6));
+        }
+
+        [HttpGet]
+        public JsonResult GetLatestNewsListByComment()
+        {
+            return Json(_newsService.GetLatestNewsListByComment(5));
+        }
+
+        [HttpGet]
+        public JsonResult SearchOneNews(string keyword)
+        {
+            return Json(string.IsNullOrWhiteSpace(keyword) 
+                ? new ResponseModel(0, "关键字不能为空") 
+                : _newsService.SearchOneNews(t => t.Title.Contains(keyword)));
+        }
+
+        public IActionResult PageNotFound()
+        {
+            ViewData["Title"] = "404";
+            return View(_newsService.GetNewsClassifyList());
         }
 
         public IActionResult About()
