@@ -299,9 +299,14 @@ namespace NewsPublish.Service
         public ResponseModel GetLatestNewsListByComment(int topCount)
         {
             var newsIds = _db.NewsComment.OrderByDescending(t => t.AddTime)
-                .GroupBy(t => t.NewsId).Select(t => t.Key).Take(topCount);
+                .GroupBy(t => t.NewsId).Select(t => t.Key).Take(topCount).ToList();
+            if (newsIds.Count == 0)
+            {
+                return new ResponseModel(200, "最新评论新闻获取成功") { Data = new List<NewsModel>() };
+            }
+
             var newsList = _db.News.Include("NewsClassify").Include("NewsComment")
-                .Where(t => newsIds.Contains(t.Id)).OrderByDescending(t => t.PublishDate);
+                .Where(t => newsIds.Contains(t.Id)).OrderByDescending(t => t.PublishDate).ToList();
 
             var response = new ResponseModel(200, "最新评论新闻获取成功") {Data = new List<NewsModel>()};
             foreach (var news in newsList)
@@ -329,7 +334,7 @@ namespace NewsPublish.Service
         /// <returns>新闻信息</returns>
         public ResponseModel SearchOneNews(Expression<Func<News, bool>> where)
         {
-            var news = _db.News.Where(where).FirstOrDefault();
+            var news = _db.News.Include("NewsClassify").Where(where).FirstOrDefault();
             if (news == null)
             {
                 return new ResponseModel(0, "新闻搜索失败");
