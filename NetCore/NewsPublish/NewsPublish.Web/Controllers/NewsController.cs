@@ -29,7 +29,7 @@ namespace NewsPublish.Web.Controllers
             {
                 ViewData["ClassifyName"] = classify.Data.Name;
 
-                var newsList = _newsService.GetNewsList(t => t.NewsClassifyId == classifyId, 6);
+                var newsList = _newsService.GetNewsList(t => t.NewsClassifyId == classifyId, int.MaxValue);
                 ViewData["NewsList"] = newsList;
 
                 var latestCommentNewsList = _newsService.GetLatestNewsListByComment(t => t.NewsClassifyId == classifyId, 6);

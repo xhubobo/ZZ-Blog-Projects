@@ -53,58 +53,36 @@
     <div class="widget widget_hot">
         <h3>最新评论文章</h3>
         <ul>
-
-            <li>
-                <a title="央企风电三大巨头联手打造东营海上风电装备制造基地" href="show.html">
-                    <span class="thumbnail">
-                        <img class="thumb" data-original="images/201610181739277776.jpg" src="images/201610181739277776.jpg" alt="央企风电三大巨头联手打造东营海上风电装备制造基地" style="display: block;">
-                    </span><span class="text">央企风电三大巨头联手打造东营海上风电装备制造基地</span><span class="muted">
-                        <i class="glyphicon glyphicon-time"></i>
-                        2016-11-01
-            </li>
-            <li>
-                <a title="央企风电三大巨头联手打造东营海上风电装备制造基地" href="show.html">
-                    <span class="thumbnail">
-                        <img class="thumb" data-original="images/201610181739277776.jpg" src="images/201610181739277776.jpg" alt="央企风电三大巨头联手打造东营海上风电装备制造基地" style="display: block;">
-                    </span><span class="text">央企风电三大巨头联手打造东营海上风电装备制造基地</span><span class="muted">
-                        <i class="glyphicon glyphicon-time"></i>
-                        2016-11-01
-            </li>
-            <li>
-                <a title="央企风电三大巨头联手打造东营海上风电装备制造基地" href="show.html">
-                    <span class="thumbnail">
-                        <img class="thumb" data-original="images/201610181739277776.jpg" src="images/201610181739277776.jpg" alt="央企风电三大巨头联手打造东营海上风电装备制造基地" style="display: block;">
-                    </span><span class="text">央企风电三大巨头联手打造东营海上风电装备制造基地</span><span class="muted">
-                        <i class="glyphicon glyphicon-time"></i>
-                        2016-11-01
-            </li>
-            <li>
-                <a title="央企风电三大巨头联手打造东营海上风电装备制造基地" href="show.html">
-                    <span class="thumbnail">
-                        <img class="thumb" data-original="images/201610181739277776.jpg" src="images/201610181739277776.jpg" alt="央企风电三大巨头联手打造东营海上风电装备制造基地" style="display: block;">
-                    </span><span class="text">央企风电三大巨头联手打造东营海上风电装备制造基地</span><span class="muted">
-                        <i class="glyphicon glyphicon-time"></i>
-                        2016-11-01
-            </li>
-            <li>
-                <a title="央企风电三大巨头联手打造东营海上风电装备制造基地" href="show.html">
-                    <span class="thumbnail">
-                        <img class="thumb" data-original="images/201610181739277776.jpg" src="images/201610181739277776.jpg" alt="央企风电三大巨头联手打造东营海上风电装备制造基地" style="display: block;">
-                    </span><span class="text">央企风电三大巨头联手打造东营海上风电装备制造基地</span><span class="muted">
-                        <i class="glyphicon glyphicon-time"></i>
-                        2016-11-01
-            </li>
-
+            @{
+                //C#代码块
+                var latestCommentResponse = ViewData["LatestCommentNewsList"] as ResponseModel;
+                if (latestCommentResponse != null && latestCommentResponse.Code == 200)
+                {
+                    foreach (var news in latestCommentResponse.Data)
+                    {
+                        <li>
+                            <a title="@news.Title" href="/News/Detail?newsId=@news.Id">
+                            <span class="thumbnail">
+                                <img class="thumb" data-original="@news.Image" src="@news.Image" alt="@news.Title" style="display: block;">
+                            </span>
+                            <span class="text">@news.Title</span>
+                            <span class="muted"></span>
+                            <i class="glyphicon glyphicon-time"></i>
+                            @news.PublishDate
+                        </li>
+                    }
+                }
+            }
         </ul>
     </div>
     <div class="widget widget_sentence">
         <a href="http://study.163.com/instructor/1025318795.htm" target="_blank" rel="nofollow">
-            <img style="width: 100%" src="images/201610241224221511.jpg" alt="专业网站建设">
+            <img style="width: 100%" src="/images/201610241224221511.jpg" alt="专业网站建设">
         </a>
     </div>
     <div class="widget widget_sentence">
         <a href="http://study.163.com/instructor/1025318795.htm" target="_blank" rel="nofollow">
-            <img style="width: 100%" src="images/ad.jpg">
+            <img style="width: 100%" src="/images/ad.jpg">
         </a>
     </div>
 </aside>
