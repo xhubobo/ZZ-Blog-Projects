@@ -49,7 +49,7 @@ namespace NewsPublish.Web.Controllers
         [HttpGet]
         public JsonResult GetLatestNewsListByComment()
         {
-            return Json(_newsService.GetLatestNewsListByComment(5));
+            return Json(_newsService.GetLatestNewsListByComment(t => true, 5));
         }
 
         [HttpGet]

@@ -294,9 +294,10 @@ namespace NewsPublish.Service
         /// <summary>
         /// 获取最新评论新闻集合
         /// </summary>
+        /// <param name="where">查询条件</param>
         /// <param name="topCount">请求个数</param>
         /// <returns>新闻集合</returns>
-        public ResponseModel GetLatestNewsListByComment(int topCount)
+        public ResponseModel GetLatestNewsListByComment(Expression<Func<News, bool>> where, int topCount)
         {
             var newsIds = _db.NewsComment.OrderByDescending(t => t.AddTime)
                 .GroupBy(t => t.NewsId).Select(t => t.Key).Take(topCount).ToList();
@@ -305,7 +306,7 @@ namespace NewsPublish.Service
                 return new ResponseModel(200, "最新评论新闻获取成功") { Data = new List<NewsModel>() };
             }
 
-            var newsList = _db.News.Include("NewsClassify").Include("NewsComment")
+            var newsList = _db.News.Include("NewsClassify").Include("NewsComment").Where(where)
                 .Where(t => newsIds.Contains(t.Id)).OrderByDescending(t => t.PublishDate).ToList();
 
             var response = new ResponseModel(200, "最新评论新闻获取成功") {Data = new List<NewsModel>()};
