@@ -50,7 +50,7 @@ namespace NewsPublish.Service
                     {
                         contents = addComment.Comments,
                         floor = $"#{(news.Data.CommentCount + 1)}",
-                        addTime = newsComment.AddTime
+                        addTime = newsComment.AddTime.ToString("yyyy-MM-dd HH:mm:ss")
                     }
                 };
             }
@@ -97,7 +97,7 @@ namespace NewsPublish.Service
                         Id = comment.Id,
                         NewsName = comment.News.Title,
                         Contents = comment.Contents,
-                        AddTime = comment.AddTime,
+                        AddTime = comment.AddTime.ToString("yyyy-MM-dd HH:mm:ss"),
                         Remark = comment.Remark,
                         Floor = $"#{floor++}"
                     }

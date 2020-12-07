@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NewsPublish.Model.Request;
 using NewsPublish.Model.Response;
 using NewsPublish.Service;
 
@@ -48,6 +49,7 @@ namespace NewsPublish.Web.Controllers
             ViewData["News"] = new ResponseModel();
             ViewData["RecommendNewsList"] = new ResponseModel();
             ViewData["CommentList"] = new ResponseModel();
+            ViewData["NewsCount"] = new ResponseModel();
 
             if (newsId < 0)
             {
@@ -69,9 +71,28 @@ namespace NewsPublish.Web.Controllers
 
                 var commentList = _commentService.GetCommentList(t => t.NewsId == newsId);
                 ViewData["CommentList"] = commentList;
+
+                var newsCount = _newsService.GetNewsCount(t => true);
+                ViewData["NewsCount"] = newsCount;
             }
 
             return View(_newsService.GetNewsClassifyList());
+        }
+
+        [HttpPost]
+        public JsonResult AddComment(AddComment addComment)
+        {
+            if (addComment.NewsId <= 0)
+            {
+                return Json(new ResponseModel(0, "新闻不存在"));
+            }
+
+            if (string.IsNullOrWhiteSpace(addComment.Comments))
+            {
+                return Json(new ResponseModel(0, "评论内容不能为空"));
+            }
+
+            return Json(_commentService.AddComment(addComment));
         }
     }
 }

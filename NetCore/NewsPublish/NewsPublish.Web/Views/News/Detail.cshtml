@@ -1,6 +1,6 @@
 ﻿
 @{
-    //ViewData["Title"] = "Detail";
+    int newsId = 0;
 }
 
 @using NewsPublish.Model.Response;
@@ -10,6 +10,7 @@
         @{
             @if (ViewData["News"] is ResponseModel newsResponse && newsResponse.Code == 200)
             {
+                newsId = newsResponse.Data.Id;
                 <header class="article-header">
                     <h1 class="article-title"><a href="#" title="@newsResponse.Data.Title">@newsResponse.Data.Title</a></h1>
                     <div class="article-meta">
@@ -53,9 +54,9 @@
                             "share": {}
                         };
                         with (document)
-                        0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src =
-                            'http://bdimg.share.baidu.com/static/api/js/share.js?v=0.js?cdnversion=' +
-                            ~(-new Date() / 36e5)];
+                            0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src =
+                                'http://bdimg.share.baidu.com/static/api/js/share.js?v=0.js?cdnversion=' +
+                                ~(-new Date() / 36e5)];
                     </script>
                 </article>
             }
@@ -88,7 +89,7 @@
                         <div class="comment-ctrl">
                             <div class="comment-prompt" style="display: none;"> <i class="fa fa-spin fa-circle-o-notch"></i> <span class="comment-prompt-text">评论正在提交中...请稍后</span> </div>
                             <div class="comment-success" style="display: none;"> <i class="fa fa-check"></i> <span class="comment-prompt-text">评论提交成功...</span> </div>
-                            <button type="submit" name="comment-submit" id="comment-submit" tabindex="4">评论</button>
+                            <button type="button" name="comment-submit" id="comment-submit" onclick="addComment()" tabindex="4">评论</button>
                         </div>
                     </div>
                 </div>
@@ -97,18 +98,23 @@
         </div>
         <div id="postcomments">
             <ol id="comment_list" class="commentlist">
-                <li class="comment-content">
-                    <span class="comment-f">#2</span>
-                    <div class="comment-main">
-                        <p><a class="address" rel="nofollow" target="_blank">匿名</a><span class="time">(2016/10/28 11:41:03)</span><br>很好,第一时间了解时政详情.</p>
-                    </div>
-                </li>
-                <li class="comment-content">
-                    <span class="comment-f">#1</span>
-                    <div class="comment-main">
-                        <p><a class="address" rel="nofollow" target="_blank">匿名</a><span class="time">(2016/10/14 21:02:39)</span><br>做的不错,希望继续改进.</p>
-                    </div>
-                </li>
+                @{
+                    @if (ViewData["CommentList"] is ResponseModel commentResponse && commentResponse.Code == 200)
+                     {
+                         @foreach (var comment in commentResponse.Data)
+                          {
+                              <li class="comment-content">
+                                  <span class="comment-f">@comment.Floor</span>
+                                  <div class="comment-main">
+                                      <p>
+                                          <a class="address" rel="nofollow" target="_blank">匿名</a>
+                                          <span class="time">(@comment.AddTime)</span><br>@comment.Contents
+                                      </p>
+                                  </div>
+                              </li>
+                          }
+                     }
+                }
             </ol>
         </div>
     </div>
@@ -124,7 +130,13 @@
                 <div role="tabpanel" class="tab-pane contact active" id="notice">
                     <h2>
                         新闻总数:
-                        888篇
+                        @{
+                            @if (ViewData["NewsCount"] is ResponseModel newsCountResponse && newsCountResponse.Code == 200)
+                            {
+                                @newsCountResponse.Data
+                            }
+                        }
+                        篇
                     </h2>
                     <h2>
                         网站运行:
@@ -160,3 +172,31 @@
     </div>
 </aside>
 
+<script type="text/javascript">
+    function addComment() {
+        var contents = $("#comment-textarea").val();
+        if (contents != null && contents !== "") {
+            $.ajax({
+                type: 'post',
+                data: { newsId:@newsId, comments: contents },
+                url: '/News/AddComment',
+                success: function(data) {
+                    if (data.code === 200) {
+                        $("#comment-textarea").val('');
+                        var html =
+                            '<li class="comment-content">' +
+                            '  <span class="comment-f">' + data.data.floor + '</span>' +
+                            '  <div class="comment-main">' +
+                            '    <p>' +
+                            '      <a class="address" rel="nofollow" target="_blank">匿名</a>' +
+                            '      <span class="time">(' + data.data.addTime + ')</span><br>' + data.data.contents +
+                            '    </p></div></li>';
+                        $("#comment_list").prepend(html);
+                    } else {
+                        alert(data.result);
+                    }
+                }
+            });
+        }
+    }
+</script>
