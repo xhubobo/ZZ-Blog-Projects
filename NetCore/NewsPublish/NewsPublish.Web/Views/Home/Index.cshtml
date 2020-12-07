@@ -155,7 +155,9 @@
                             '" title="' + news.title + '" target="_blank">' +
                             '  <img class="thumb" data-original="' + news.image + '" ' +
                             '  src="' + news.image + '" alt="' + news.title + '" style="display: inline;"></a>' +
-                            '<header><h2><a href="show.html" title="' + news.title + '" target="_blank">' + news.title + '</a></h2></header>' +
+                            '<header><h2><a href="/News/Detail?newsId=' + news.id + '" ' +
+                            '  title="' + news.title + '" target="_blank">' + news.title + '</a></h2>' +
+                            '</header>' +
                             '<p class="meta">' +
                             '  <time class="time"><i class="glyphicon glyphicon-time"></i> ' + news.publishDate + '</time>' +
                             '  <a class="comment" title="评论" target="_blank"><i class="glyphicon glyphicon-comment"></i> ' + news.commentCount + '</a>' +
