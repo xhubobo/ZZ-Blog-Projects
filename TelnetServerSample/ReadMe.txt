@@ -1,0 +1,1 @@
+用于将SuperSocket封装到C#类库中的项目Sample。
